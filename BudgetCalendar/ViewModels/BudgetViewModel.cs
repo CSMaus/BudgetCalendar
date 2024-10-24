@@ -24,6 +24,16 @@ namespace BudgetCalendar.ViewModels
                 OnPropertyChanged(nameof(NewCategoryTemp));
             }
         }
+        private bool _isPanelAddCategory;
+        public bool IsPanelAddCategory
+        {
+            get => _isPanelAddCategory;
+            set
+            {
+                _isPanelAddCategory = value;
+                OnPropertyChanged(nameof(IsPanelAddCategory));
+            }
+        }
 
         public DateTime SelectedDate
         {
@@ -52,6 +62,8 @@ namespace BudgetCalendar.ViewModels
 
         public BudgetViewModel()
         {
+            NewCategoryTemp = new Category { Name = "New Category", Limit = 0, IsDaily = false, IsWeekendDifferent = false, WeekendLimit = 0 };
+
             _dataManager = new DataManager();
             AllMonths = _dataManager.LoadAllData();
             SelectedDate = DateTime.Today;
@@ -102,7 +114,7 @@ namespace BudgetCalendar.ViewModels
             }
 
             // Create a new category with default values (this can be changed later by the user)
-            var newCategory = new Category { Name = "New Category", Limit = 0, IsDaily = false, IsWeekendDifferent = false, WeekendLimit = 0 };
+            var newCategory = NewCategoryTemp;
             SelectedDay.Categories.Add(newCategory);
 
             SelectedDay.DailySpends.Add(new List<decimal>());

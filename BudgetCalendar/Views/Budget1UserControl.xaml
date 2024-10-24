@@ -13,7 +13,31 @@
         </Grid.ColumnDefinitions>
         <Calendar Grid.Column="0" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" DisplayDateStart="2000-01-01"
                   DisplayDateEnd="2100-12-31"/>
-        <ListBox Grid.Column="1" ItemsSource="{Binding }">
+        
+        <ListBox Grid.Column="1" ItemsSource="{Binding NewCategoryTemp}" d:ItemsSource="{d:SampleData ItemCount=5}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Orientation="Vertical">
+                                <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
+                                    <ToggleButton Height="20" VerticalAlignment="Top" IsChecked="{Binding IsPanelAddCategory, Mode=TwoWay}"
+                                                  Content="Add New Category" Background="{DynamicResource Background}"/>
+                                </Border>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Text="{Binding NewCategoryTemp.Name, Mode=TwoWay}" ToolTip="Category Name" HorizontalAlignment="Stretch"/>
+                                    <TextBox Text="{Binding NewCategoryTemp.Limit, Mode=TwoWay}" ToolTip="Limit" HorizontalAlignment="Stretch"/>
+                                    <CheckBox IsChecked="{Binding NewCategoryTemp.IsDaily, Mode=TwoWay}" Content="Is Daily?" HorizontalAlignment="Stretch"/>
+                                    <CheckBox IsChecked="{Binding NewCategoryTemp.IsWeekendDifferent, Mode=TwoWay}" Content="Is Weekend Different?" HorizontalAlignment="Stretch"/>
+                                    <TextBox Text="{Binding NewCategoryTemp.WeekendLimit, Mode=TwoWay}" ToolTip="Weekend Limit" HorizontalAlignment="Stretch"
+                                                Visibility="{Binding NewCategoryTemp.IsWeekendDifferent}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                        </ScrollViewer>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
             
         </ListBox>
     </Grid>
