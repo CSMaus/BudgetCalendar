@@ -13,6 +13,8 @@
         </Grid.ColumnDefinitions>
         <Calendar Grid.Column="0" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" DisplayDateStart="2000-01-01"
                   DisplayDateEnd="2100-12-31"/>
-        
+        <ListBox Grid.Column="1" ItemsSource="{Binding }">
+            
+        </ListBox>
     </Grid>
 </UserControl>

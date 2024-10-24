@@ -14,6 +14,17 @@ namespace BudgetCalendar.ViewModels
         private DateTime _selectedDate;
         private DataManager _dataManager;
 
+        private Category _NewCategoryTemp;
+        public Category NewCategoryTemp
+        {
+            get => _NewCategoryTemp;
+            set
+            {
+                _NewCategoryTemp = value;
+                OnPropertyChanged(nameof(NewCategoryTemp));
+            }
+        }
+
         public DateTime SelectedDate
         {
             get => _selectedDate;
@@ -49,7 +60,6 @@ namespace BudgetCalendar.ViewModels
         }
         private void UpdateSelectedDay()
         {
-            // Find the current month based on the selected date
             var currentMonth = AllMonths.FirstOrDefault(m => m.Year == SelectedDate.Year && m.MonthNumber == SelectedDate.Month);
 
             if (currentMonth == null)
@@ -73,18 +83,45 @@ namespace BudgetCalendar.ViewModels
                 };
                 currentMonth.Days.Add(SelectedDay);
             }
+
+            var previousDay = currentMonth.Days.FirstOrDefault(d => d.TodaysDate < SelectedDay.TodaysDate);
+            SelectedDay.CalculateDailyRemains(previousDay);
+
+            currentMonth.CalculateMonthlyRemains();
         }
+
 
         public void AddNewCategory()
         {
-            var categoryManager = new CategoryManager();
-            var daysArr = AllMonths.SelectMany(m => m.Days).ToArray();
-            ObservableCollection<Day> days = new ObservableCollection<Day>(daysArr);
-            var categories = categoryManager.InitializeCategoriesForDay(SelectedDate, days);
-            categories.Add(new Category { Name = "New Category", Limit = 0, IsDaily = false });
-            SelectedDay.Categories = categories;
+            // Get the current month
+            var currentMonth = AllMonths.FirstOrDefault(m => m.Year == SelectedDate.Year && m.MonthNumber == SelectedDate.Month);
+
+            if (currentMonth == null)
+            {
+                return;
+            }
+
+            // Create a new category with default values (this can be changed later by the user)
+            var newCategory = new Category { Name = "New Category", Limit = 0, IsDaily = false, IsWeekendDifferent = false, WeekendLimit = 0 };
+            SelectedDay.Categories.Add(newCategory);
+
+            SelectedDay.DailySpends.Add(new List<decimal>());
+            SelectedDay.RemainingDailyBudget.Add(0);
+
+            // Now, loop through all days in the current month and add the new category with default spends
+            foreach (var day in currentMonth.Days)
+            {
+                if (!day.Categories.Any(c => c.Name == newCategory.Name))
+                {
+                    day.Categories.Add(newCategory);
+                    day.DailySpends.Add(new List<decimal>());
+                    day.RemainingDailyBudget.Add(newCategory.Limit);
+                }
+            }
+
             OnPropertyChanged(nameof(SelectedDay));
         }
+
         public void SaveAllData()
         {
             _dataManager.SaveAllData(AllMonths);
