@@ -6,39 +6,100 @@
              xmlns:local="clr-namespace:BudgetCalendar.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Background="{DynamicResource MainBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="7*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" MinHeight="85"/>
+        </Grid.RowDefinitions>
         <Calendar Grid.Column="0" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" DisplayDateStart="2000-01-01"
-                  DisplayDateEnd="2100-12-31"/>
-        
-        <ListBox Grid.Column="1" ItemsSource="{Binding NewCategoryTemp}" d:ItemsSource="{d:SampleData ItemCount=5}">
+                  DisplayDateEnd="2100-12-31" Grid.RowSpan="3"/>
+
+
+        <ListBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding SelectedDay.Categories}"  d:ItemsSource="{d:SampleData ItemCount=1}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel Orientation="Vertical">
-                                <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
-                                    <ToggleButton Height="20" VerticalAlignment="Top" IsChecked="{Binding IsPanelAddCategory, Mode=TwoWay}"
-                                                  Content="Add New Category" Background="{DynamicResource Background}"/>
-                                </Border>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox Text="{Binding NewCategoryTemp.Name, Mode=TwoWay}" ToolTip="Category Name" HorizontalAlignment="Stretch"/>
-                                    <TextBox Text="{Binding NewCategoryTemp.Limit, Mode=TwoWay}" ToolTip="Limit" HorizontalAlignment="Stretch"/>
-                                    <CheckBox IsChecked="{Binding NewCategoryTemp.IsDaily, Mode=TwoWay}" Content="Is Daily?" HorizontalAlignment="Stretch"/>
-                                    <CheckBox IsChecked="{Binding NewCategoryTemp.IsWeekendDifferent, Mode=TwoWay}" Content="Is Weekend Different?" HorizontalAlignment="Stretch"/>
-                                    <TextBox Text="{Binding NewCategoryTemp.WeekendLimit, Mode=TwoWay}" ToolTip="Weekend Limit" HorizontalAlignment="Stretch"
-                                                Visibility="{Binding NewCategoryTemp.IsWeekendDifferent}"/>
-                                </StackPanel>
-                            </StackPanel>
-                            
-                        </ScrollViewer>
-                    </Border>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5" MinWidth="70"/>
+
+                        <TextBox Text="{Binding DataContext.SelectedDay.DailySpends[ItemsControl.AlternationIndex], 
+                                RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                         ToolTip="Spends for this category for this day" Margin="5" MinWidth="70"/>
+
+                        <TextBox Text="{Binding DataContext.SelectedDay.RemainingDailyBudget[ItemsControl.AlternationIndex], 
+                                RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                         ToolTip="Remaining budget for this category until this day" Margin="5" MinWidth="70"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            
         </ListBox>
+        <Border Grid.Column="1" Grid.Row="1" BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" >
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Date: " VerticalAlignment="Center" Margin="5,2,2,2"/>
+                <TextBox Text="{Binding SelectedDay.TodaysDate, Mode=TwoWay}" Margin="2" MinWidth="50"/>
+                <TextBlock Text="Remains: " VerticalAlignment="Center" Margin="5,2,2,2"/>
+                <TextBox Text="{Binding SelectedDay.RemainingDailyBudgetTotal, Mode=TwoWay}" ToolTip="Remaining budget for this day" Margin="2" MinWidth="50"/>
+                <TextBlock Text="Spends: " VerticalAlignment="Center" Margin="5,2,2,2"/>
+                <TextBox Text="{Binding SelectedDay.SpendsDailyBudgetTotal, Mode=TwoWay}" ToolTip="Total spends in this day" Margin="2" MinWidth="50"/>
+            </StackPanel>
+        </Border>
+
+        <!--<ListBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding NewCategoryTemp}" d:ItemsSource="{d:SampleData ItemCount=5}" >
+            <ListBox.ItemTemplate>
+                <DataTemplate>-->
+        <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1"  Grid.Column="1" Grid.Row="2">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical">
+                    <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
+                        <ToggleButton Height="20" VerticalAlignment="Top" IsChecked="{Binding IsPanelAddCategory, Mode=TwoWay}"
+                                                Content="Add New Category" Background="{DynamicResource Background}"/>
+                    </Border>
+
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Height" Value="0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPanelAddCategory}" Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Height" To="60" Duration="0:0:0.1"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Height" To="0" Duration="0:0:0.1"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Text="{Binding NewCategoryTemp.Name, Mode=TwoWay}" ToolTip="Category Name" HorizontalAlignment="Stretch"/>
+                            <TextBox Text="{Binding NewCategoryTemp.Limit, Mode=TwoWay}" ToolTip="Limit" HorizontalAlignment="Stretch"/>
+                            <CheckBox IsChecked="{Binding NewCategoryTemp.IsDaily, Mode=TwoWay}" Content="Is Daily?" HorizontalAlignment="Stretch"/>
+                            <CheckBox IsChecked="{Binding NewCategoryTemp.IsWeekendDifferent, Mode=TwoWay}" Content="Is Weekend Different?" HorizontalAlignment="Stretch"/>
+                            <TextBox Text="{Binding NewCategoryTemp.WeekendLimit, Mode=TwoWay}" ToolTip="Weekend Limit" HorizontalAlignment="Stretch"
+                                        Visibility="{Binding NewCategoryTemp.IsWeekendDifferent}"/>
+
+                            <Button Content="Add category" Command="{Binding AddNewCategoryCommand}" Margin="20, 2,2,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        <!-- </DataTemplate>
+            </ListBox.ItemTemplate>
+            
+        </ListBox>-->
     </Grid>
 </UserControl>

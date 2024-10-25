@@ -13,7 +13,7 @@
     <Color x:Key="Gradient1">#E6CCD0</Color>
     <Color x:Key="Gradient2">#FFE6E7</Color>
 
-    <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+    <Style TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
         <Setter Property="FontFamily" Value="Comic Sans MS"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -133,7 +133,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="BtnStyle" TargetType="Button">
+    <Style TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
         <Setter Property="FontSize" Value="{StaticResource StandardFontSize}"/>
         <Setter Property="FontFamily" Value="Comic Sans MS"/>

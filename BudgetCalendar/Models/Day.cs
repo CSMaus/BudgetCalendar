@@ -10,7 +10,7 @@ namespace BudgetCalendar.Models
     public class Day
     {
         public ObservableCollection<Category> Categories { get; set; }
-        public ObservableCollection<List<decimal>> DailySpends { get; set; }  // Spends for each category
+        public ObservableCollection<List<decimal>> DailySpends { get; set; }  // Spends for each category // List<decimal>
         public ObservableCollection<decimal> RemainingDailyBudget { get; set; }  // Remaining budget for each category
         public DateTime TodaysDate { get; set; }
         public decimal RemainingDailyBudgetTotal { get; set; }
@@ -21,7 +21,14 @@ namespace BudgetCalendar.Models
         {
             bool isWeekend = (TodaysDate.DayOfWeek == DayOfWeek.Saturday || TodaysDate.DayOfWeek == DayOfWeek.Sunday);
 
-            for (int i = 0; i < Categories.Count; i++)
+            if (Categories == null)
+            {
+                Categories = new ObservableCollection<Category>();
+                DailySpends = new ObservableCollection<List<decimal>>();
+                RemainingDailyBudget = new ObservableCollection<decimal>();
+            }
+
+            for (int i = 0; i < Categories.Count; i++)  // BudgetCalendar.Models.Day.Categories.get returned null.
             {
                 var prevDayR = previousDay != null ? previousDay.RemainingDailyBudget[i] : 0;
 

@@ -1,5 +1,6 @@
 ﻿using BudgetCalendar.Models;
 using BudgetCalendar.ViewModels;
+using BudgetCalendar.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,22 @@ namespace BudgetCalendar
     /// </summary>
     public partial class MainWindow : Window
     {
+        private BudgetViewModel _budgetViewModel;
+        private Budget1UserControl budget1UserControl;
+
         public MainWindow()
         {
             InitializeComponent();
+            budget1UserControl = new Budget1UserControl();
+            _budgetViewModel = new BudgetViewModel();
+            BudgetUC1.Navigate(budget1UserControl);
+            UpdateDataContext(_budgetViewModel);
+        }
+
+        private void UpdateDataContext(BudgetViewModel viewModel)
+        {
+            budget1UserControl.DataContext = null;
+            budget1UserControl.DataContext = viewModel;
         }
 
         public void OnSaveButtonClicked(Month currentMonth)

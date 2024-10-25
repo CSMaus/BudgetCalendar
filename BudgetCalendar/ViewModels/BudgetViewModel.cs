@@ -123,6 +123,9 @@ namespace BudgetCalendar.ViewModels
             // Now, loop through all days in the current month and add the new category with default spends
             foreach (var day in currentMonth.Days)
             {
+                // TODO:
+                // when loop over all days, need to be sure, that collections (like categories) are not null
+                // i e need to initialize them
                 if (!day.Categories.Any(c => c.Name == newCategory.Name))
                 {
                     day.Categories.Add(newCategory);

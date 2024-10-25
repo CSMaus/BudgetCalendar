@@ -41,9 +41,12 @@ namespace BudgetCalendar.Models
             // Assume there is at least one day
             var totalDays = Days.Count;
 
-            for (int i = 0; i < Days[0].Categories.Count; i++)
+            // need to select here todays date, not Day[0]
+            int todaysDateIndex = DateTime.Now.Day - 1;
+
+            for (int i = 0; i < Days[todaysDateIndex].Categories.Count; i++) // BudgetCalendar.Models.Day.Categories.get returned null.
             {
-                var category = Days[0].Categories[i];
+                var category = Days[todaysDateIndex].Categories[i];
 
                 if (!category.IsDaily)
                 {
