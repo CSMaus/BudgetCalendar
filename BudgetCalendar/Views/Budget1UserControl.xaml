@@ -91,7 +91,7 @@
                             <TextBox Text="{Binding NewCategoryTemp.WeekendLimit, Mode=TwoWay}" ToolTip="Weekend Limit" HorizontalAlignment="Stretch"
                                         Visibility="{Binding NewCategoryTemp.IsWeekendDifferent}"/>
 
-                            <Button Content="Add category" Command="{Binding AddNewCategoryCommand}" Margin="20, 2,2,2"/>
+                            <Button Content="Add category" Command="{Binding AddNewCategoryCommand}" Margin="40, 2,2,2"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

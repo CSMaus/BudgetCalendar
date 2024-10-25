@@ -33,7 +33,16 @@ namespace BudgetCalendar.Models
             int daysInMonth = DateTime.DaysInMonth(Year, MonthNumber);
             for (int i = 1; i <= daysInMonth; i++)
             {
-                Days.Add(new Day { TodaysDate = new DateTime(Year, MonthNumber, i) });
+                var newDay = new Day { TodaysDate = new DateTime(Year, MonthNumber, i) };
+                if (i==1)
+                {
+                    newDay.CalculateDailyRemains(null);
+                }
+                else
+                {
+                    newDay.CalculateDailyRemains(Days[i - 2]);
+                }
+                Days.Add(newDay);
             }
         }
         public void CalculateMonthlyRemains()

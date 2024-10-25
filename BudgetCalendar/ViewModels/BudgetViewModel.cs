@@ -114,7 +114,15 @@ namespace BudgetCalendar.ViewModels
             }
 
             // Create a new category with default values (this can be changed later by the user)
-            var newCategory = NewCategoryTemp;
+
+            var newCategory = new Category
+            {
+                Name = NewCategoryTemp.Name,
+                Limit = NewCategoryTemp.Limit,
+                IsDaily = NewCategoryTemp.IsDaily,
+                IsWeekendDifferent = NewCategoryTemp.IsWeekendDifferent,
+                WeekendLimit = NewCategoryTemp.WeekendLimit
+            };
             SelectedDay.Categories.Add(newCategory);
 
             SelectedDay.DailySpends.Add(new List<decimal>());
