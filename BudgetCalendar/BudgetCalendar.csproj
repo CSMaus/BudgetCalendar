@@ -58,6 +58,7 @@
     <Compile Include="Models\Day.cs" />
     <Compile Include="Models\Month.cs" />
     <Compile Include="Utilities\CategoryManager.cs" />
+    <Compile Include="Utilities\TextBoxDisplayConverter.cs" />
     <Compile Include="ViewModels\BudgetViewModel.cs" />
     <Compile Include="ViewModels\DataManager.cs" />
     <Compile Include="Views\Budget1UserControl.xaml.cs">

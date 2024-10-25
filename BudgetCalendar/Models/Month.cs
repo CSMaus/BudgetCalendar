@@ -47,7 +47,6 @@ namespace BudgetCalendar.Models
         }
         public void CalculateMonthlyRemains()
         {
-            // Assume there is at least one day
             var totalDays = Days.Count;
 
             // need to select here todays date, not Day[0]
@@ -59,35 +58,18 @@ namespace BudgetCalendar.Models
 
                 if (!category.IsDaily)
                 {
-                    // For monthly categories, calculate total spends and remaining budget
                     decimal totalSpent = 0;
 
-                    // Sum all spends for this category from day 1 to the current day
                     for (int dayIndex = 0; dayIndex < totalDays; dayIndex++)
                     {
-                        totalSpent += Days[dayIndex].DailySpends[i].Sum();
+                        totalSpent += Days[dayIndex].DailySpendsSum[i];
                     }
 
-                    // Calculate the remaining monthly budget for this category
                     RemainingMonthlyBudget[i] = category.Limit - totalSpent;
                 }
             }
-
-            // Update total monthly values
             SpendsMonthlyBudgetTotal = SpendsMonthlyBudget.Sum();
             RemainingMonthlyBudgetTotal = RemainingMonthlyBudget.Sum();
         }
     }
-    /*
-    public class Day
-    {
-        public ObservableCollection<Category> Categories { get; set; }
-        public ObservableCollection<List<decimal>> DailySpends { get; set; } // number of categories x number of spends for each category
-        public ObservableCollection<decimal> RemainingDailyBudget { get; set; } // remaining budget for each category for this day
-        public DateTime TodaysDate { get; set; }
-        public decimal RemainingDailyBudgetTotal { get; set; }
-        public decimal SpendsDailyBudgetTotal { get; set; }
-
-    }
-    */
 }

@@ -4,14 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BudgetCalendar.Views"
+             xmlns:utils="clr-namespace:BudgetCalendar.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <utils:TextBoxDisplayConverter x:Key="TextBoxDisplayConverter"/>
+    </UserControl.Resources>
     <Grid Background="{DynamicResource MainBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="7*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" MinHeight="85"/>
@@ -19,21 +24,37 @@
         <Calendar Grid.Column="0" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" DisplayDateStart="2000-01-01"
                   DisplayDateEnd="2100-12-31" Grid.RowSpan="3"/>
 
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+            <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
+                <TextBlock Text="Category Name" VerticalAlignment="Center" Margin="5" Width="100"/>
+            </Border>
+            <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" HorizontalAlignment="Center">
+                <TextBlock Text="Spends" HorizontalAlignment="Center" Margin="5" Width="100"/>
+            </Border>
+            <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
+                <TextBlock Text="Remains" VerticalAlignment="Center" Margin="5" Width="100"/>
+            </Border>
+        </StackPanel>
 
-        <ListBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding SelectedDay.Categories}" d:ItemsSource="{d:SampleData ItemCount=1}" SelectionChanged="ListBox_SelectionChanged">
+        <ListBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding SelectedDay.Categories}" d:ItemsSource="{d:SampleData ItemCount=1}" SelectionChanged="ListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
 
-                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5" MinWidth="70"/>
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5" Width="100"/>
 
-                        <StackPanel Orientation="Vertical" Margin="5">
-                            <StackPanel x:Name="SpendsContainer" Orientation="Horizontal" />
-                            <Button Content="Add Spend" Command="{Binding DataContext.AddSpendCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=DataContext}" Margin="5"/>
-                        </StackPanel>
+                        <!--<TextBox Text="{Binding DailySpends}" VerticalAlignment="Center" Margin="5" Width="100"/>-->
+                        <TextBox VerticalAlignment="Center" Margin="5" Width="100" IsEnabled="{Binding IsEditable}">
+                            <TextBox.Text>
+                                <MultiBinding Converter="{StaticResource TextBoxDisplayConverter}">
+                                    <Binding Path="DailySpends"/>
+                                    <Binding Path="IsEnabled" RelativeSource="{RelativeSource Self}"/>
+                                    <Binding Path="DailySpendsSumm"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
 
-                        <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" Margin="5" >
+                        <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" Margin="5" Width="100">
                             <TextBlock Text="{Binding DataContext.SelectedDay.RemainingDailyBudget[ItemsControl.AlternationIndex], 
                                       RelativeSource={RelativeSource AncestorType=ListBox}}"
                                ToolTip="Remaining budget for this category until this day" 
@@ -44,7 +65,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Border Grid.Column="1" Grid.Row="1" BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" >
+        <Border Grid.Column="1" Grid.Row="2" BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" >
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Date:" VerticalAlignment="Center" Margin="5,2,2,2"/>
                 <TextBlock Text="{Binding SelectedDay.TodaysDate, Mode=TwoWay}" Margin="2" MinWidth="50" Background="{DynamicResource Background}"/>
@@ -58,7 +79,7 @@
         <!--<ListBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding NewCategoryTemp}" d:ItemsSource="{d:SampleData ItemCount=5}" >
             <ListBox.ItemTemplate>
                 <DataTemplate>-->
-        <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1"  Grid.Column="1" Grid.Row="2">
+        <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1"  Grid.Column="1" Grid.Row="3">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Orientation="Vertical">
                     <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">

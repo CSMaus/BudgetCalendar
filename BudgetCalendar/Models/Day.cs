@@ -11,7 +11,9 @@ namespace BudgetCalendar.Models
     public class Day
     {
         public ObservableCollection<Category> Categories { get; set; }
-        public ObservableCollection<List<decimal>> DailySpends { get; set; }  // Spends for each category // List<decimal>
+        // public ObservableCollection<List<decimal>> DailySpends { get; set; }  // Spends for each category // List<decimal>
+        public ObservableCollection<string> DailySpends { get; set; }  // Spends for each category // List<decimal>
+        public ObservableCollection<decimal> DailySpendsSum { get; set; }  // Spends for each category // List<decimal>
         public ObservableCollection<decimal> RemainingDailyBudget { get; set; }  // Remaining budget for each category
         public DateTime TodaysDate { get; set; }
         public decimal RemainingDailyBudgetTotal { get; set; }
@@ -25,7 +27,8 @@ namespace BudgetCalendar.Models
             if (Categories == null)
             {
                 Categories = new ObservableCollection<Category>();
-                DailySpends = new ObservableCollection<List<decimal>>();
+                DailySpends = new ObservableCollection<string>();
+                DailySpendsSum = new ObservableCollection<decimal>();
                 RemainingDailyBudget = new ObservableCollection<decimal>();
             }
 
@@ -38,12 +41,12 @@ namespace BudgetCalendar.Models
                 if (category.IsDaily)
                 {
                     decimal dailyLimit = category.IsWeekendDifferent && isWeekend ? category.WeekendLimit : category.Limit;
-                    decimal spentToday = DailySpends[i].Sum();
+                    decimal spentToday = DailySpendsSum[i];
                     RemainingDailyBudget[i] = prevDayR + dailyLimit - spentToday;
                 }
             }
 
-            SpendsDailyBudgetTotal = DailySpends.Sum(spends => spends.Sum());
+            SpendsDailyBudgetTotal = DailySpendsSum.Sum(); // spends => spends.Sum());
             RemainingDailyBudgetTotal = RemainingDailyBudget.Sum();
 
 

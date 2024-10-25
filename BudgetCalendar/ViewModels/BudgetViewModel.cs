@@ -100,7 +100,8 @@ namespace BudgetCalendar.ViewModels
                 {
                     TodaysDate = SelectedDate,
                     Categories = new ObservableCollection<Category>(),
-                    DailySpends = new ObservableCollection<List<decimal>>(),
+                    DailySpends = new ObservableCollection<string>(),
+                    DailySpendsSum = new ObservableCollection<decimal>(),
                     RemainingDailyBudget = new ObservableCollection<decimal>(),
                     RemainingDailyBudgetTotal = 0,
                     SpendsDailyBudgetTotal = 0
@@ -116,9 +117,10 @@ namespace BudgetCalendar.ViewModels
 
         public void AddNewSpend()
         {
+            // TODO: change it to OnDailySpends Item changed
             if (SelectedDay != null && SelectedCategoryIndex >= 0 && SelectedCategoryIndex < SelectedDay.DailySpends.Count)
             {
-                SelectedDay.DailySpends[SelectedCategoryIndex].Add(0);
+             
 
                 // Recalculate the remains after adding the new spend
                 // SelectedDay.CalculateDailyRemains(null);  // instead of null need to define previous day
@@ -127,7 +129,6 @@ namespace BudgetCalendar.ViewModels
 
         public void AddNewCategory()
         {
-            // Get the current month
             var currentMonth = AllMonths.FirstOrDefault(m => m.Year == SelectedDate.Year && m.MonthNumber == SelectedDate.Month);
 
             if (currentMonth == null)
@@ -135,7 +136,6 @@ namespace BudgetCalendar.ViewModels
                 return;
             }
 
-            // Create a new category with default values (this can be changed later by the user)
 
             var newCategory = new Category
             {
@@ -147,10 +147,10 @@ namespace BudgetCalendar.ViewModels
             };
             SelectedDay.Categories.Add(newCategory);
 
-            SelectedDay.DailySpends.Add(new List<decimal>());
+            SelectedDay.DailySpends.Add("");
+            SelectedDay.DailySpendsSum.Add(0);
             SelectedDay.RemainingDailyBudget.Add(0);
 
-            // Now, loop through all days in the current month and add the new category with default spends
             foreach (var day in currentMonth.Days)
             {
                 // TODO:
@@ -159,7 +159,8 @@ namespace BudgetCalendar.ViewModels
                 if (!day.Categories.Any(c => c.Name == newCategory.Name))
                 {
                     day.Categories.Add(newCategory);
-                    day.DailySpends.Add(new List<decimal>());
+                    day.DailySpends.Add("");
+                    day.DailySpendsSum.Add(0);
                     day.RemainingDailyBudget.Add(newCategory.Limit);
                 }
             }
