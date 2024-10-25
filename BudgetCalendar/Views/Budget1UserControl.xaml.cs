@@ -1,4 +1,5 @@
-﻿using BudgetCalendar.ViewModels;
+﻿using BudgetCalendar.Models;
+using BudgetCalendar.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,11 @@ namespace BudgetCalendar.Views
         {
             InitializeComponent();
             DataContext = new BudgetViewModel();
+        }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

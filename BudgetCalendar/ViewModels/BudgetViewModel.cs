@@ -58,7 +58,18 @@ namespace BudgetCalendar.ViewModels
         }
 
         public ObservableCollection<Month> AllMonths { get; set; }
-        public ICommand AddNewCategoryCommand { get; set; }
+        public ICommand AddNewCategoryCommand { get; }
+        public ICommand AddSpendCommand { get; } // add new spend in list of sends of selected category of selected day
+        private int _selectedCategoryIndex;
+        public int SelectedCategoryIndex
+        {
+            get => _selectedCategoryIndex;
+            set
+            {
+                _selectedCategoryIndex = value;
+                OnPropertyChanged(nameof(SelectedCategoryIndex));
+            }
+        }
 
         public BudgetViewModel()
         {
@@ -69,6 +80,7 @@ namespace BudgetCalendar.ViewModels
             SelectedDate = DateTime.Today;
             UpdateSelectedDay();
             AddNewCategoryCommand = new RelayCommand(() => AddNewCategory());
+            AddSpendCommand = new RelayCommand(() => AddNewSpend());
         }
         private void UpdateSelectedDay()
         {
@@ -102,6 +114,16 @@ namespace BudgetCalendar.ViewModels
             currentMonth.CalculateMonthlyRemains();
         }
 
+        public void AddNewSpend()
+        {
+            if (SelectedDay != null && SelectedCategoryIndex >= 0 && SelectedCategoryIndex < SelectedDay.DailySpends.Count)
+            {
+                SelectedDay.DailySpends[SelectedCategoryIndex].Add(0);
+
+                // Recalculate the remains after adding the new spend
+                // SelectedDay.CalculateDailyRemains(null);  // instead of null need to define previous day
+            }
+        }
 
         public void AddNewCategory()
         {

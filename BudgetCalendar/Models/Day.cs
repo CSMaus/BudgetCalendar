@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,18 @@ namespace BudgetCalendar.Models
 
             SpendsDailyBudgetTotal = DailySpends.Sum(spends => spends.Sum());
             RemainingDailyBudgetTotal = RemainingDailyBudget.Sum();
+
+
+            OnPropertyChanged(nameof(RemainingDailyBudgetTotal));
+            OnPropertyChanged(nameof(SpendsDailyBudgetTotal));
+            OnPropertyChanged(nameof(DailySpends));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

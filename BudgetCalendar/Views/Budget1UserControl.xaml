@@ -20,30 +20,37 @@
                   DisplayDateEnd="2100-12-31" Grid.RowSpan="3"/>
 
 
-        <ListBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding SelectedDay.Categories}"  d:ItemsSource="{d:SampleData ItemCount=1}">
+        <ListBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding SelectedDay.Categories}" d:ItemsSource="{d:SampleData ItemCount=1}" SelectionChanged="ListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
+
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5" MinWidth="70"/>
 
-                        <TextBox Text="{Binding DataContext.SelectedDay.DailySpends[ItemsControl.AlternationIndex], 
-                                RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                         ToolTip="Spends for this category for this day" Margin="5" MinWidth="70"/>
+                        <StackPanel Orientation="Vertical" Margin="5">
+                            <StackPanel x:Name="SpendsContainer" Orientation="Horizontal" />
+                            <Button Content="Add Spend" Command="{Binding DataContext.AddSpendCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=DataContext}" Margin="5"/>
+                        </StackPanel>
 
-                        <TextBox Text="{Binding DataContext.SelectedDay.RemainingDailyBudget[ItemsControl.AlternationIndex], 
-                                RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                         ToolTip="Remaining budget for this category until this day" Margin="5" MinWidth="70"/>
+                        <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" Margin="5" >
+                            <TextBlock Text="{Binding DataContext.SelectedDay.RemainingDailyBudget[ItemsControl.AlternationIndex], 
+                                      RelativeSource={RelativeSource AncestorType=ListBox}}"
+                               ToolTip="Remaining budget for this category until this day" 
+                               Margin="5" MinWidth="70"/>
+                        </Border>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
         <Border Grid.Column="1" Grid.Row="1" BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" >
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Date: " VerticalAlignment="Center" Margin="5,2,2,2"/>
-                <TextBox Text="{Binding SelectedDay.TodaysDate, Mode=TwoWay}" Margin="2" MinWidth="50"/>
-                <TextBlock Text="Remains: " VerticalAlignment="Center" Margin="5,2,2,2"/>
+                <TextBlock Text="Date:" VerticalAlignment="Center" Margin="5,2,2,2"/>
+                <TextBlock Text="{Binding SelectedDay.TodaysDate, Mode=TwoWay}" Margin="2" MinWidth="50" Background="{DynamicResource Background}"/>
+                <TextBlock Text="Remains:" VerticalAlignment="Center" Margin="5,2,2,2"/>
                 <TextBox Text="{Binding SelectedDay.RemainingDailyBudgetTotal, Mode=TwoWay}" ToolTip="Remaining budget for this day" Margin="2" MinWidth="50"/>
-                <TextBlock Text="Spends: " VerticalAlignment="Center" Margin="5,2,2,2"/>
+                <TextBlock Text="Spends:" VerticalAlignment="Center" Margin="5,2,2,2"/>
                 <TextBox Text="{Binding SelectedDay.SpendsDailyBudgetTotal, Mode=TwoWay}" ToolTip="Total spends in this day" Margin="2" MinWidth="50"/>
             </StackPanel>
         </Border>
@@ -91,7 +98,7 @@
                             <TextBox Text="{Binding NewCategoryTemp.WeekendLimit, Mode=TwoWay}" ToolTip="Weekend Limit" HorizontalAlignment="Stretch"
                                         Visibility="{Binding NewCategoryTemp.IsWeekendDifferent}"/>
 
-                            <Button Content="Add category" Command="{Binding AddNewCategoryCommand}" Margin="40, 2,2,2"/>
+                            <Button Content="Add category" Command="{Binding AddNewCategoryCommand}" Margin="2, 2,2,2"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
