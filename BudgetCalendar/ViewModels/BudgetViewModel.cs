@@ -3,6 +3,7 @@ using BudgetCalendar.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
@@ -60,6 +61,7 @@ namespace BudgetCalendar.ViewModels
         public ObservableCollection<Month> AllMonths { get; set; }
         public ICommand AddNewCategoryCommand { get; }
         public ICommand AddSpendCommand { get; } // add new spend in list of sends of selected category of selected day
+
         private int _selectedCategoryIndex;
         public int SelectedCategoryIndex
         {
@@ -79,9 +81,19 @@ namespace BudgetCalendar.ViewModels
             AllMonths = _dataManager.LoadAllData();
             SelectedDate = DateTime.Today;
             UpdateSelectedDay();
+            SelectedDay.DailySpends.CollectionChanged += DailySpends_CollectionChanged;
             AddNewCategoryCommand = new RelayCommand(() => AddNewCategory());
             AddSpendCommand = new RelayCommand(() => AddNewSpend());
         }
+
+        private void DailySpends_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Replace && e.NewStartingIndex >= 0)
+            {
+                SelectedDay.UpdateDailySpendsSum(e.NewStartingIndex);
+            }
+        }
+
         private void UpdateSelectedDay()
         {
             var currentMonth = AllMonths.FirstOrDefault(m => m.Year == SelectedDate.Year && m.MonthNumber == SelectedDate.Month);

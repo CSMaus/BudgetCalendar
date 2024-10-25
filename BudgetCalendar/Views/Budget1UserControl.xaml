@@ -7,9 +7,6 @@
              xmlns:utils="clr-namespace:BudgetCalendar.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <utils:TextBoxDisplayConverter x:Key="TextBoxDisplayConverter"/>
-    </UserControl.Resources>
     <Grid Background="{DynamicResource MainBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
@@ -44,15 +41,22 @@
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5" Width="100"/>
 
                         <!--<TextBox Text="{Binding DailySpends}" VerticalAlignment="Center" Margin="5" Width="100"/>-->
-                        <TextBox VerticalAlignment="Center" Margin="5" Width="100" IsEnabled="{Binding IsEditable}">
-                            <TextBox.Text>
-                                <MultiBinding Converter="{StaticResource TextBoxDisplayConverter}">
-                                    <Binding Path="DailySpends"/>
-                                    <Binding Path="IsEnabled" RelativeSource="{RelativeSource Self}"/>
-                                    <Binding Path="DailySpendsSumm"/>
-                                </MultiBinding>
-                            </TextBox.Text>
+                        <TextBox VerticalAlignment="Center" Margin="5" Width="100" Height="27" >
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Text" Value="{Binding DataContext.SelectedDay.DailySpends[ItemsControl.AlternationIndex], 
+                                            RelativeSource={RelativeSource AncestorType=ListBox}, 
+                                            UpdateSourceTrigger=PropertyChanged}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsReadOnly, RelativeSource={RelativeSource Self}}" Value="True">
+                                            <Setter Property="Text" Value="{Binding DataContext.SelectedDay.DailySpendsSum[ItemsControl.AlternationIndex], 
+                                                    RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
                         </TextBox>
+
 
                         <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" Margin="5" Width="100">
                             <TextBlock Text="{Binding DataContext.SelectedDay.RemainingDailyBudget[ItemsControl.AlternationIndex], 

@@ -11,15 +11,14 @@ namespace BudgetCalendar.Models
     public class Day
     {
         public ObservableCollection<Category> Categories { get; set; }
-        // public ObservableCollection<List<decimal>> DailySpends { get; set; }  // Spends for each category // List<decimal>
-        public ObservableCollection<string> DailySpends { get; set; }  // Spends for each category // List<decimal>
-        public ObservableCollection<decimal> DailySpendsSum { get; set; }  // Spends for each category // List<decimal>
-        public ObservableCollection<decimal> RemainingDailyBudget { get; set; }  // Remaining budget for each category
+        // public ObservableCollection<List<decimal>> DailySpends { get; set; }
+        public ObservableCollection<string> DailySpends { get; set; }
+        public ObservableCollection<decimal> DailySpendsSum { get; set; }
+        public ObservableCollection<decimal> RemainingDailyBudget { get; set; }
         public DateTime TodaysDate { get; set; }
         public decimal RemainingDailyBudgetTotal { get; set; }
         public decimal SpendsDailyBudgetTotal { get; set; }
 
-        // Method to calculate remains for each category for this day
         public void CalculateDailyRemains(Day previousDay)
         {
             bool isWeekend = (TodaysDate.DayOfWeek == DayOfWeek.Saturday || TodaysDate.DayOfWeek == DayOfWeek.Sunday);
@@ -32,7 +31,7 @@ namespace BudgetCalendar.Models
                 RemainingDailyBudget = new ObservableCollection<decimal>();
             }
 
-            for (int i = 0; i < Categories.Count; i++)  // BudgetCalendar.Models.Day.Categories.get returned null.
+            for (int i = 0; i < Categories.Count; i++)
             {
                 var prevDayR = previousDay != null ? previousDay.RemainingDailyBudget[i] : 0;
 
@@ -53,6 +52,47 @@ namespace BudgetCalendar.Models
             OnPropertyChanged(nameof(RemainingDailyBudgetTotal));
             OnPropertyChanged(nameof(SpendsDailyBudgetTotal));
             OnPropertyChanged(nameof(DailySpends));
+        }
+
+        public void UpdateDailySpendsSum(int index)
+        {
+            var spends = DailySpends[index].Split('+');
+            decimal sum = 0;
+            foreach (var s in spends)
+            {
+                if (decimal.TryParse(s, out decimal value))
+                {
+                    sum += value;
+                }
+                else if (decimal.TryParse(s.Replace(".", ","), out value))
+                {
+                    sum += value;
+                }
+            }
+            DailySpendsSum[index] = sum;
+        }
+
+        public void UpdateDailySpendsSumTotal()
+        {
+            DailySpendsSum.Clear();
+
+            foreach (var spend in DailySpends)
+            {
+                var spends = spend.Split('+');
+                decimal sum = 0;
+                foreach (var s in spends)
+                {
+                    if (decimal.TryParse(s, out decimal value))
+                    {
+                        sum += value;
+                    }
+                    else if(decimal.TryParse(s.Replace(".", ","), out value))
+                    {
+                        sum += value;
+                    }
+                }
+                DailySpendsSum.Add(sum);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
