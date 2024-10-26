@@ -23,16 +23,48 @@
 
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
             <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
-                <TextBlock Text="Category Name" VerticalAlignment="Center" Margin="5" Width="100"/>
+                <TextBlock Text="Category Name" VerticalAlignment="Center" Margin="5" Width="108"/>
             </Border>
             <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" HorizontalAlignment="Center">
-                <TextBlock Text="Spends" HorizontalAlignment="Center" Margin="5" Width="100"/>
+                <TextBlock Text="Spends" HorizontalAlignment="Center" Margin="5" Width="95"/>
+            </Border>
+            <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" HorizontalAlignment="Center">
+                <TextBlock Text="Spends Sum" HorizontalAlignment="Center" Margin="5" Width="90"/>
             </Border>
             <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1">
                 <TextBlock Text="Remains" VerticalAlignment="Center" Margin="5" Width="100"/>
             </Border>
         </StackPanel>
 
+        <ListBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding SelectedSpends}" d:ItemsSource="{d:SampleData ItemCount=2}" Margin="0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" Margin="0">
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CategoryName}" VerticalAlignment="Center" Margin="5" Width="100"/>
+
+                            <TextBox Text="{Binding Spends, Mode=TwoWay}" ToolTip="Spends in this category" Margin="5" Width="100"/>
+
+                            <TextBlock Text="{Binding SpendsSum}" ToolTip="Total day spends for this category" Margin="5" Width="100"/>
+                            <!--
+                        <TextBox VerticalAlignment="Center" Margin="5" Width="100" IsEnabled="{Binding IsEnabled}">
+                            <TextBox.Text>
+                                <MultiBinding UpdateSourceTrigger="PropertyChanged" FallbackValue="{Binding SpendsSum}">
+                                    <Binding Path="SpendsSum" />
+                                    <Binding Path="Spends" />
+                                    <Binding Path="IsEnabled" RelativeSource="{RelativeSource Self}" />
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>-->
+                            <TextBlock Text="{Binding Remains, Mode=TwoWay}" ToolTip="Remaining budget for this category" Margin="5" Width="100"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <!--
         <ListBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding SelectedDay.Categories}" d:ItemsSource="{d:SampleData ItemCount=1}" SelectionChanged="ListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -40,7 +72,6 @@
 
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5" Width="100"/>
 
-                        <!--<TextBox Text="{Binding DailySpends}" VerticalAlignment="Center" Margin="5" Width="100"/>-->
                         <TextBox VerticalAlignment="Center" Margin="5" Width="100" Height="27" >
                             <TextBox.Style>
                                 <Style TargetType="TextBox">
@@ -68,6 +99,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        -->
 
         <Border Grid.Column="1" Grid.Row="2" BorderBrush="{DynamicResource BordersColor}" BorderThickness="1" >
             <StackPanel Orientation="Horizontal">

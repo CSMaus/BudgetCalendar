@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\Day.cs" />
     <Compile Include="Models\Month.cs" />
+    <Compile Include="Models\SpendsRemainsByCategoryInDay.cs" />
     <Compile Include="Utilities\CategoryManager.cs" />
     <Compile Include="ViewModels\BudgetViewModel.cs" />
     <Compile Include="ViewModels\DataManager.cs" />

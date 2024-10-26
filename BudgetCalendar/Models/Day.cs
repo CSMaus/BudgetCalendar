@@ -14,10 +14,17 @@ namespace BudgetCalendar.Models
         // public ObservableCollection<List<decimal>> DailySpends { get; set; }
         public ObservableCollection<string> DailySpends { get; set; }
         public ObservableCollection<decimal> DailySpendsSum { get; set; }
-        public ObservableCollection<decimal> RemainingDailyBudget { get; set; }
+        public ObservableCollection<decimal> RemainingBudget { get; set; }
+
+        // will try to use these only
+        public ObservableCollection<SpendsRemainsByCategoryInDay> SRByCatInDay{ get; set; }
+
         public DateTime TodaysDate { get; set; }
         public decimal RemainingDailyBudgetTotal { get; set; }
         public decimal SpendsDailyBudgetTotal { get; set; }
+
+
+
 
         public void CalculateDailyRemains(Day previousDay)
         {
@@ -28,12 +35,12 @@ namespace BudgetCalendar.Models
                 Categories = new ObservableCollection<Category>();
                 DailySpends = new ObservableCollection<string>();
                 DailySpendsSum = new ObservableCollection<decimal>();
-                RemainingDailyBudget = new ObservableCollection<decimal>();
+                RemainingBudget = new ObservableCollection<decimal>();
             }
 
             for (int i = 0; i < Categories.Count; i++)
             {
-                var prevDayR = previousDay != null ? previousDay.RemainingDailyBudget[i] : 0;
+                var prevDayR = previousDay != null ? previousDay.RemainingBudget[i] : 0;
 
                 var category = Categories[i];
 
@@ -41,12 +48,12 @@ namespace BudgetCalendar.Models
                 {
                     decimal dailyLimit = category.IsWeekendDifferent && isWeekend ? category.WeekendLimit : category.Limit;
                     decimal spentToday = DailySpendsSum[i];
-                    RemainingDailyBudget[i] = prevDayR + dailyLimit - spentToday;
+                    RemainingBudget[i] = prevDayR + dailyLimit - spentToday;
                 }
             }
 
             SpendsDailyBudgetTotal = DailySpendsSum.Sum(); // spends => spends.Sum());
-            RemainingDailyBudgetTotal = RemainingDailyBudget.Sum();
+            RemainingDailyBudgetTotal = RemainingBudget.Sum();
 
 
             OnPropertyChanged(nameof(RemainingDailyBudgetTotal));

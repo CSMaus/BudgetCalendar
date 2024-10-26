@@ -55,8 +55,12 @@ namespace BudgetCalendar.ViewModels
             {
                 _selectedDay = value;
                 OnPropertyChanged(nameof(SelectedDay));
+                UpdateSelectedSpendsWhenChangeDay();
             }
         }
+
+        public ObservableCollection<SpendsRemainsByCategoryInDay> SelectedSpends { get; set; } = new ObservableCollection<SpendsRemainsByCategoryInDay>();
+
 
         public ObservableCollection<Month> AllMonths { get; set; }
         public ICommand AddNewCategoryCommand { get; }
@@ -75,22 +79,123 @@ namespace BudgetCalendar.ViewModels
 
         public BudgetViewModel()
         {
+            SelectedSpends = new ObservableCollection<SpendsRemainsByCategoryInDay>();
+            SelectedSpends.CollectionChanged += SelectedSpends_CollectionChanged;
+
             NewCategoryTemp = new Category { Name = "New Category", Limit = 0, IsDaily = false, IsWeekendDifferent = false, WeekendLimit = 0 };
 
             _dataManager = new DataManager();
             AllMonths = _dataManager.LoadAllData();
             SelectedDate = DateTime.Today;
             UpdateSelectedDay();
+            // need to add here uploading all daa from json
+            // UpdateSelectedSpendsWhenChangeDay();
+
             SelectedDay.DailySpends.CollectionChanged += DailySpends_CollectionChanged;
             AddNewCategoryCommand = new RelayCommand(() => AddNewCategory());
-            AddSpendCommand = new RelayCommand(() => AddNewSpend());
         }
+
+        private void SelectedSpends_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (SpendsRemainsByCategoryInDay item in e.NewItems)
+                {
+                    item.PropertyChanged += UpdateSpends_PropertyChanged;
+                }
+            }
+            else if(e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (SpendsRemainsByCategoryInDay item in e.OldItems)
+                {
+                    item.PropertyChanged -= UpdateSpends_PropertyChanged;
+                }
+            }
+        }
+
+        private void UpdateSpends_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Spends")
+            {
+                if(sender is SpendsRemainsByCategoryInDay item)
+                {
+                    int CategoryIndex = SelectedSpends.IndexOf(item);
+                    UpdateSpendsndRemains(CategoryIndex);
+                }
+                // SelectedDay.UpdateDailySpendsSum(SelectedCategoryIndex);
+            }
+        }
+
+        public void UpdateSelectedSpendsWhenChangeDay()
+        {
+            if (SelectedDay == null)
+            {
+                return;
+            }
+
+            if (SelectedSpends.Count != SelectedDay.Categories.Count)
+            {
+                SelectedSpends.Clear();
+                for (int i = 0; i < SelectedDay.Categories.Count; i++)
+                {
+                    var spend = new SpendsRemainsByCategoryInDay
+                    {
+                        Spends = SelectedDay.DailySpends[i],
+                        SpendsSum = SelectedDay.DailySpendsSum[i],
+                        Remains = SelectedDay.RemainingBudget[i],
+                        CategoryName = SelectedDay.Categories[i].Name
+                    };
+                    SelectedSpends.Add(spend);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < SelectedSpends.Count; i++)
+                {
+                    SelectedSpends[i].Spends = SelectedDay.DailySpends[i];
+                    SelectedSpends[i].SpendsSum = SelectedDay.DailySpendsSum[i];
+                    SelectedSpends[i].Remains = SelectedDay.RemainingBudget[i];
+                    SelectedSpends[i].CategoryName = SelectedDay.Categories[i].Name;
+                }
+            }
+        }
+
+        public void UpdateSpendsndRemains(int index)
+        {
+            var spends = SelectedSpends[index].Spends.Split('+');
+            decimal sum = 0;
+            foreach (var s in spends)
+            {
+                if (decimal.TryParse(s, out decimal value))
+                {
+                    sum += value;
+                }
+                else if (decimal.TryParse(s.Replace(".", ","), out value))
+                {
+                    sum += value;
+                }
+            }
+            SelectedSpends[index].SpendsSum = sum;
+
+            var limit = SelectedDay.Categories[index].Limit;
+            SelectedSpends[index].Remains = limit - sum;
+
+            // now update all values for selected day
+            SelectedDay.DailySpends[index] = SelectedSpends[index].Spends;
+            SelectedDay.DailySpendsSum[index] = sum;
+            SelectedDay.RemainingBudget[index] = limit - sum;
+
+            SelectedDay.SpendsDailyBudgetTotal += sum;
+            SelectedDay.RemainingDailyBudgetTotal = SelectedDay.RemainingBudget.Sum();
+        }
+
+
 
         private void DailySpends_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Replace && e.NewStartingIndex >= 0)
             {
-                SelectedDay.UpdateDailySpendsSum(e.NewStartingIndex);
+                //SelectedDay.UpdateDailySpendsSum(e.NewStartingIndex);
             }
         }
 
@@ -114,7 +219,7 @@ namespace BudgetCalendar.ViewModels
                     Categories = new ObservableCollection<Category>(),
                     DailySpends = new ObservableCollection<string>(),
                     DailySpendsSum = new ObservableCollection<decimal>(),
-                    RemainingDailyBudget = new ObservableCollection<decimal>(),
+                    RemainingBudget = new ObservableCollection<decimal>(),
                     RemainingDailyBudgetTotal = 0,
                     SpendsDailyBudgetTotal = 0
                 };
@@ -161,23 +266,25 @@ namespace BudgetCalendar.ViewModels
 
             SelectedDay.DailySpends.Add("");
             SelectedDay.DailySpendsSum.Add(0);
-            SelectedDay.RemainingDailyBudget.Add(0);
+            SelectedDay.RemainingBudget.Add(0);
 
             foreach (var day in currentMonth.Days)
             {
                 // TODO:
                 // when loop over all days, need to be sure, that collections (like categories) are not null
                 // i e need to initialize them
+                decimal dayLim = newCategory.Limit;
                 if (!day.Categories.Any(c => c.Name == newCategory.Name))
                 {
                     day.Categories.Add(newCategory);
                     day.DailySpends.Add("");
                     day.DailySpendsSum.Add(0);
-                    day.RemainingDailyBudget.Add(newCategory.Limit);
+                    day.RemainingBudget.Add(dayLim);
                 }
             }
 
             OnPropertyChanged(nameof(SelectedDay));
+            UpdateSelectedSpendsWhenChangeDay();
         }
 
         public void SaveAllData()
